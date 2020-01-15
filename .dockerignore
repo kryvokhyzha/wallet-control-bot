@@ -5,7 +5,6 @@ Makefile
 # Configuration
 .travis.yml
 Dockerfile
-env.sh
 .gitignore
 
 # Documentation
