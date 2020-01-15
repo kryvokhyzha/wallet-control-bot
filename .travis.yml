@@ -1,0 +1,21 @@
+sudo: required
+
+services:
+    - docker
+
+dist: xenial
+
+language: python
+
+python:
+    - "3.7"
+
+install:
+    - pip install -r src/requirements.txt
+
+script:
+    - cd src && python -m pytest -v && cd ..
+
+after_success:
+    - sh .travis/deploy_dockerhub.sh
+    - test “$TRAVIS_BRANCH” = “master” && test "$TRAVIS_PULL_REQUEST" = "false" && sh .travis/deploy_heroku.sh

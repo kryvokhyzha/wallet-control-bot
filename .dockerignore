@@ -1,0 +1,12 @@
+# Scripts
+.travis
+Makefile
+
+# Configuration
+.travis.yml
+Dockerfile
+.gitignore
+
+# Documentation
+README.md
+LICENSE
