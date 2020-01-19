@@ -1,11 +1,5 @@
 FROM python:3.7-alpine
 
-ENV TELEGRAM_API_TOKEN=""
-ENV TELEGRAM_ACCESS_ID=""
-ENV TELEGRAM_PROXY_URL=""
-ENV TELEGRAM_PROXY_LOGIN=""
-ENV TELEGRAM_PROXY_PASSWORD=""
-
 RUN apk update && apk upgrade
 RUN apk add --no-cache bash\
                        python \
