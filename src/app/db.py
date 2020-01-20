@@ -1,8 +1,19 @@
 import os
 from typing import Dict, List, Tuple
 
+from motor.motor_asyncio import AsyncIOMotorClient
+
 import sqlite3
 
+
+uri = "mongodb://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}".format(os.getenv('DB_USER', ''),
+                                                                     os.getenv('DB_PASSWORD', ''),
+                                                                     os.getenv('DB_HOST', ''),
+                                                                     os.getenv('DB_NAME', '')
+                                                                    )
+print('Connection to MongoLab...')
+client = AsyncIOMotorClient(uri)
+print('Connection success!')
 
 conn = sqlite3.connect(os.path.join("app", "db", "finance.db"))
 cursor = conn.cursor()
