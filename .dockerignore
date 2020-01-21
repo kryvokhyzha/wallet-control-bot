@@ -1,6 +1,7 @@
 # Scripts
 .travis
 Makefile
+env.sh
 
 # Configuration
 .travis.yml
@@ -10,3 +11,9 @@ Dockerfile
 # Documentation
 README.md
 LICENSE
+
+# venv
+venv
+
+# cache
+__pycache__
