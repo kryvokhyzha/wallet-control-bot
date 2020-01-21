@@ -13,7 +13,7 @@ heroku config:set DB_HOST=$DB_HOST --app $HEROKU_APP_NAME
 heroku config:set DB_NAME=$DB_NAME --app $HEROKU_APP_NAME
 heroku config:set DB_USER_COLLECTION_NAME=$DB_USER_COLLECTION_NAME --app $HEROKU_APP_NAME
 heroku config:set DB_CATEGORY_COLLECTION_NAME=$DB_CATEGORY_COLLECTION_NAME --app $HEROKU_APP_NAME
-
+heroku config:set DB_EXPENSES_COLLECTION_NAME=$DB_EXPENSES_COLLECTION_NAME --app $HEROKU_APP_NAME
 
 heroku container:push web --app $HEROKU_APP_NAME
 heroku container:release web --app $HEROKU_APP_NAME
