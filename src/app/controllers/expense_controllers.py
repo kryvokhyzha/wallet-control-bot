@@ -14,10 +14,13 @@ from app.models.category import Categories
 from app.models.expense import Expense
 from app.models.message import Message
 
+from bson.objectid import ObjectId
+
 
 async def add_expense(user_id: int, raw_message: str) -> Expense:
-    """Добавляет новое сообщение.
-    Принимает на вход текст сообщения, пришедшего в бот."""
+    """
+        Adding new expense
+    """
     parsed_message = _parse_message(raw_message)
 
     category = Categories()
@@ -39,7 +42,9 @@ async def add_expense(user_id: int, raw_message: str) -> Expense:
 
 
 def _parse_message(raw_message: str) -> Message:
-    """Парсит текст пришедшего сообщения о новом расходе."""
+    """
+        Parsing text message about new expense
+    """
     regexp_result = re.match(r"([\d ]+) (.*)", raw_message)
     if not regexp_result or not regexp_result.group(0) \
             or not regexp_result.group(1) or not regexp_result.group(2):
@@ -53,19 +58,25 @@ def _parse_message(raw_message: str) -> Message:
 
 
 def _get_now_formatted() -> str:
-    """Возвращает сегодняшнюю дату строкой"""
+    """
+        Return current date
+    """
     return _get_now_datetime().strftime("%Y-%m-%d %H:%M:%S")
 
 
 def _get_now_datetime() -> datetime.datetime:
-    """Возвращает сегодняшний datetime с учётом времненной зоны Мск."""
+    """
+        Return current date with time zone
+    """
     tz = pytz.timezone("Europe/Kiev")
     now = datetime.datetime.now(tz)
     return now
 
 
 async def get_today_statistics(user_id: int) -> str:
-    """Возвращает строкой статистику расходов за сегодня"""
+    """
+        Return statistics for current date
+    """
 
     now = _get_now_datetime()
     start = _get_now_datetime().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -90,7 +101,9 @@ async def get_today_statistics(user_id: int) -> str:
 
 
 async def get_month_statistics(user_id: int) -> str:
-    """Возвращает строкой статистику расходов за текущий месяц"""
+    """
+        Return statistics for current month
+    """
     now = _get_now_datetime()
     start = _get_now_datetime().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
@@ -115,7 +128,27 @@ async def get_month_statistics(user_id: int) -> str:
             f"{now.day * budget} грн.")
 
 
+async def last(user_id: int) -> List[Expense]:
+    """
+        Return few last expenses
+    """
+
+    rows = await db.do_find(DB_EXPENSES_COLLECTION_NAME, {'user_id': user_id}, sort_param={'sort_by': 'created', 'sort_type': -1}, limit=5)
+
+    last_expenses = [Expense(id=row['_id'], amount=row['amount'], category_name=row['category_codename']) for row in rows]
+    return last_expenses
+
+
+async def delete_expense(row_id: str) -> None:
+    """
+        Delete message my _id
+    """
+    await db.do_delete_one(DB_EXPENSES_COLLECTION_NAME, {'_id': ObjectId(row_id)})
+
+
 async def _get_budget_limit(user_id) -> int:
-    """Возвращает дневной лимит трат для основных базовых трат"""
+    """
+        Changing daily limit for base expense
+    """
     user = await db.do_find_one(DB_USER_COLLECTION_NAME, {'id': user_id})
     return user['budget']

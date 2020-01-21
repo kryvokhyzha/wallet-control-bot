@@ -43,8 +43,9 @@ async def send_help(message: types.Message):
 @dp.message_handler(lambda message: message.text.startswith('/del'))
 async def del_expense(message: types.Message):
     """Удаляет одну запись о расходе по её идентификатору"""
-    row_id = int(message.text[4:])
-    expenses.delete_expense(row_id)
+    row_id = message.text[4:]
+    await expense_cnt.delete_expense(row_id)
+
     answer_message = "Удалил"
     await message.answer(answer_message)
 
@@ -78,17 +79,20 @@ async def month_statistics(message: types.Message):
 @dp.message_handler(commands=['expenses'])
 async def list_expenses(message: types.Message):
     """Отправляет последние несколько записей о расходах"""
-    last_expenses = expenses.last()
+    last_expenses = await expense_cnt.last(message.from_user.id)
+
     if not last_expenses:
         await message.answer("Расходы ещё не заведены")
         return
 
     last_expenses_rows = [
-        f"{expense.amount} грн. на {expense.category_name} — нажми "
-        f"/del{expense.id} для удаления"
+        f"{expense['amount']} грн. на {expense['category_name']} — нажми "
+        f"/del{expense['id']} для удаления"
         for expense in last_expenses]
+
     answer_message = "Последние сохранённые траты:\n\n* " + "\n\n* "\
             .join(last_expenses_rows)
+
     await message.answer(answer_message)
 
 
@@ -107,12 +111,15 @@ async def add_expense(message: types.Message):
         Adding new expense
     """
     user_id = message.from_user.id
+
     try:
         expense = await expense_cnt.add_expense(user_id, message.text)
     except NotCorrectMessage as e:
         await message.answer(str(e))
         return
+
     answer_message = (
         f"Добавлены траты {expense['amount']} грн. на {expense['category_name']}.\n\n"
         f"{await expense_cnt.get_today_statistics(user_id)}")
+
     await message.answer(answer_message)

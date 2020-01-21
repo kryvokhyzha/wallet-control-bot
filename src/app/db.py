@@ -36,12 +36,25 @@ async def do_find_one(collection_name: str, document: Union[User, Expense, Dict]
     return await collection.find_one(document)
 
 
-async def do_find(collection_name: str, document: Union[User, Expense, Dict]) -> List[Dict]:
+async def do_find(collection_name: str, document: Union[User, Expense, Dict], sort_param=None, limit=None) -> List[Dict]:
     collection = db.get_collection(collection_name)
+    cursor = collection.find(document)
+
+    if sort_param is not None:
+        cursor.sort(sort_param['sort_by'], sort_param['sort_type'])
+
+    if limit is not None:
+        cursor.limit(limit)
+
     result = []
-    async for item in collection.find(document):
+    async for item in cursor:
         result.append(item)
     return result
+
+
+async def do_delete_one(collection_name: str, document: Union[User, Expense, Dict]):
+    collection = db.get_collection(collection_name)
+    await collection.delete_one(document)
 
 
 async def compute_sum(collection_name: str, field_name:str, document: Union[User, Expense, Dict]) -> List[Dict]:
