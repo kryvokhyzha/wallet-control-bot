@@ -7,7 +7,7 @@ from aiogram import types
 
 import app.exceptions as exceptions
 import app.expenses as expenses
-import app.users as users
+import app.controllers.user_controller as user_cnt
 import app.messages as messages 
 from app.categories import Categories
 
@@ -32,7 +32,7 @@ async def send_welcome(message: types.Message):
                 'username': user.username,
                 'language_code': user.language_code}
 
-    await users.add_new_user(documnet)
+    await user_cnt.add_new_user(documnet)
     await message.answer(messages.WELCOM_MSG)
 
 
