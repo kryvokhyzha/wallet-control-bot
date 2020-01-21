@@ -1,6 +1,9 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union, Optional
 from app.utils.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_USER_COLLECTION_NAME, DB_CATEGORY_COLLECTION_NAME
 from app.utils.constants import INIT_CATEGORY
+
+from app.models.user import User
+from app.models.expense import Expense
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -18,19 +21,19 @@ db = client.get_database(DB_NAME)
 user_collection = db.get_collection(DB_USER_COLLECTION_NAME)
 
 
-async def do_insert(document: Dict, collection=user_collection):
+async def do_insert(document: Union[User, Expense, Dict], collection=user_collection):
     await collection.insert_one(document)
 
 
-async def do_insert_many(documents: List, collection=user_collection):
+async def do_insert_many(documents: List[Union[User, Expense, Dict]], collection=user_collection):
     await collection.insert_many(documents)
 
 
-async def do_find_one(document: Dict, collection=user_collection):
+async def do_find_one(document: Union[User, Expense, Dict], collection=user_collection) -> Optional[Dict]:
     return await collection.find_one(document)
 
 
-async def do_update(document: Dict, collection=user_collection):
+async def do_update(document: Union[User, Expense, Dict], collection=user_collection):
     old_user = await do_find_one({'id': document['id']})
     _id = old_user['_id']
 

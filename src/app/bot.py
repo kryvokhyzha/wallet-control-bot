@@ -27,13 +27,8 @@ async def send_welcome(message: types.Message):
     """
         Sending welcome message to user
     """
-    user = message.from_user
-    documnet = {'id': user.id,
-                'is_bot': user.is_bot,
-                'username': user.username,
-                'language_code': user.language_code}
 
-    await user_cnt.add_new_user(documnet)
+    await user_cnt.add_new_user(message.from_user)
     await message.answer(messages.WELCOM_MSG)
 
 
