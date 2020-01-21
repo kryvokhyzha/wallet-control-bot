@@ -1,6 +1,7 @@
 # Scripts
 .travis
 Makefile
+env.sh
 
 # Configuration
 .travis.yml
@@ -13,3 +14,6 @@ LICENSE
 
 # venv
 venv
+
+# cache
+__pycache__
