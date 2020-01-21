@@ -1,5 +1,5 @@
 from typing import Dict, List, Tuple
-from app.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_USER_COLLECTION_NAME
+from app.utils.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_USER_COLLECTION_NAME
 
 from motor.motor_asyncio import AsyncIOMotorClient
 

@@ -8,7 +8,7 @@ from aiogram import types
 import app.exceptions as exceptions
 import app.expenses as expenses
 import app.controllers.user_controller as user_cnt
-import app.messages as messages 
+import app.utils.messages as messages 
 from app.categories import Categories
 
 
