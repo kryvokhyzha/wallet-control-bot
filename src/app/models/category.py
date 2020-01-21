@@ -1,10 +1,14 @@
 from typing import Dict, List, NamedTuple
 
+from app.utils.config import DB_CATEGORY_COLLECTION_NAME
+
 import app.db as db
 
 
-class Category(NamedTuple):
-    """Структура категории"""
+class Category(Dict):
+    """
+        Category structure
+    """
     codename: str
     name: str
     is_base_expense: bool
@@ -12,14 +16,12 @@ class Category(NamedTuple):
 
 
 class Categories:
-    def __init__(self):
-        self._categories = self._load_categories()
+    async def _init(self):
+        self._categories = await self._load_categories()
 
-    def _load_categories(self) -> List[Category]:
+    async def _load_categories(self) -> List[Category]:
         """Возвращает справочник категорий расходов из БД"""
-        categories = db.fetchall(
-            "category", "codename name is_base_expense aliases".split()
-        )
+        categories = await db.fetchall(DB_CATEGORY_COLLECTION_NAME)
         categories = self._fill_aliases(categories)
         return categories
 
@@ -29,7 +31,7 @@ class Categories:
         Например, категория «кафе» может быть написана как cafe,
         ресторан и тд."""
         categories_result = []
-        for index, category in enumerate(categories):
+        for category in categories:
             aliases = category["aliases"].split(",")
             aliases = list(filter(None, map(str.strip, aliases)))
             aliases.append(category["codename"])
@@ -40,6 +42,7 @@ class Categories:
                 is_base_expense=category['is_base_expense'],
                 aliases=aliases
             ))
+
         return categories_result
 
     def get_all_categories(self) -> List[Dict]:

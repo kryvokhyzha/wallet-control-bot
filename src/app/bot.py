@@ -8,9 +8,8 @@ from aiogram import types
 import app.exceptions as exceptions
 import app.expenses as expenses
 import app.controllers.user_controllers as user_cnt
-# import app.controllers.category_controllers as category_cnt
+import app.controllers.category_controllers as category_cnt
 import app.utils.messages as messages 
-from app.categories import Categories
 
 
 logging.basicConfig(level=logging.INFO)
@@ -51,11 +50,10 @@ async def del_expense(message: types.Message):
 
 @dp.message_handler(commands=['categories'])
 async def categories_list(message: types.Message):
-    """Отправляет список категорий расходов"""
-    categories = Categories().get_all_categories()
-    answer_message = "Категории трат:\n\n* " +\
-            ("\n* ".join([c.name+' ('+", ".join(c.aliases)+')' for c in categories]))
-    await message.answer(answer_message)
+    """
+        Sending category list
+    """
+    await message.answer(await category_cnt.get_categories_list())
 
 
 @dp.message_handler(commands=['today'])

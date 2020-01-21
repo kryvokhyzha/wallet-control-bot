@@ -40,6 +40,14 @@ async def do_update(document: Union[User, Expense, Dict], collection=user_collec
     await collection.replace_one({'_id': _id}, document)
 
 
+async def fetchall(collection_name: str) -> List[Dict]:
+    coll = db[collection_name]
+    result = []
+    async for document in coll.find({}):
+        result.append(document)
+    return result
+
+
 async def check_db_exists(*args, **kwargs):
     collist = await db.list_collection_names()
     
@@ -62,19 +70,6 @@ def insert(table: str, column_values: Dict):
         f"VALUES ({placeholders})",
         values)
     conn.commit()
-
-
-def fetchall(table: str, columns: List[str]) -> List[Tuple]:
-    columns_joined = ", ".join(columns)
-    cursor.execute(f"SELECT {columns_joined} FROM {table}")
-    rows = cursor.fetchall()
-    result = []
-    for row in rows:
-        dict_row = {}
-        for index, column in enumerate(columns):
-            dict_row[column] = row[index]
-        result.append(dict_row)
-    return result
 
 
 def delete(table: str, row_id: int) -> None:

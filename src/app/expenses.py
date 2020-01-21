@@ -6,7 +6,7 @@ import pytz
 
 import app.db as db
 import app.exceptions as exceptions
-from app.categories import Categories
+from app.models.category import Categories
 
 
 class Message(NamedTuple):
