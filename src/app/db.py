@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple, Union, Optional
-from app.utils.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_USER_COLLECTION_NAME, DB_CATEGORY_COLLECTION_NAME
+from app.utils.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
+from app.utils.config import DB_USER_COLLECTION_NAME, DB_CATEGORY_COLLECTION_NAME
 from app.utils.constants import INIT_CATEGORY
 
 from app.models.user import User
@@ -18,32 +19,36 @@ client = AsyncIOMotorClient(uri)
 print('Connection success!')
 
 db = client.get_database(DB_NAME)
-user_collection = db.get_collection(DB_USER_COLLECTION_NAME)
 
 
-async def do_insert(document: Union[User, Expense, Dict], collection=user_collection):
+async def do_insert_one(collection_name: str, document: Union[User, Expense, Dict]):
+    collection = db.get_collection(collection_name)
     await collection.insert_one(document)
 
 
-async def do_insert_many(documents: List[Union[User, Expense, Dict]], collection=user_collection):
+async def do_insert_many(collection_name: str, documents: List[Union[User, Expense, Dict]]):
+    collection = db.get_collection(collection_name)
     await collection.insert_many(documents)
 
 
-async def do_find_one(document: Union[User, Expense, Dict], collection=user_collection) -> Optional[Dict]:
+async def do_find_one(collection_name: str, document: Union[User, Expense, Dict]) -> Optional[Dict]:
+    collection = db.get_collection(collection_name)
     return await collection.find_one(document)
 
 
-async def do_update(document: Union[User, Expense, Dict], collection=user_collection):
-    old_user = await do_find_one({'id': document['id']})
+async def do_update(collection_name: str, document: Union[User, Expense, Dict]):
+    collection = db.get_collection(collection_name)
+
+    old_user = await do_find_one(collection_name, {'id': document['id']})
     _id = old_user['_id']
 
     await collection.replace_one({'_id': _id}, document)
 
 
 async def fetchall(collection_name: str) -> List[Dict]:
-    coll = db[collection_name]
+    collection = db.get_collection(collection_name)
     result = []
-    async for document in coll.find({}):
+    async for document in collection.find({}):
         result.append(document)
     return result
 

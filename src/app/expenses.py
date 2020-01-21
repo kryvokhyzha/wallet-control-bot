@@ -22,12 +22,15 @@ class Expense(NamedTuple):
     category_name: str
 
 
-def add_expense(raw_message: str) -> Expense:
+async def add_expense(raw_message: str) -> Expense:
     """Добавляет новое сообщение.
     Принимает на вход текст сообщения, пришедшего в бот."""
     parsed_message = _parse_message(raw_message)
-    category = Categories().get_category(
-        parsed_message.category_text)
+
+    category = Categories()
+    await category._init()
+    category = category.get_category(parsed_message.category_text)
+
     inserted_row_id = db.insert("expense", {
         "amount": parsed_message.amount,
         "created": _get_now_formatted(),

@@ -5,6 +5,6 @@ class Expense(Dict):
     """
         Expense structure
     """
-    id: Optional[int]
+    user_id: int
     amount: int
     category_name: str

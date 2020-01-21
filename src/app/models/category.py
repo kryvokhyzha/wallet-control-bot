@@ -16,8 +16,12 @@ class Category(Dict):
 
 
 class Categories:
+    _is_loaded = False
+    
     async def _init(self):
-        self._categories = await self._load_categories()
+        if not self._is_loaded:
+            self._categories = await self._load_categories()
+            self._is_loaded = True
 
     async def _load_categories(self) -> List[Category]:
         """Возвращает справочник категорий расходов из БД"""
@@ -54,9 +58,9 @@ class Categories:
         finded = None
         other_category = None
         for category in self._categories:
-            if category.codename == "other":
+            if category['codename'] == "other":
                 other_category = category
-            for alias in category.aliases:
+            for alias in category['aliases']:
                 if category_name in alias:
                     finded = category
         if not finded:

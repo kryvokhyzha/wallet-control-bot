@@ -5,8 +5,8 @@ import aiohttp
 from aiogram import Bot, Dispatcher, types
 from aiogram import types
 
-import app.exceptions as exceptions
-import app.expenses as expenses
+from app.Exceptions.NotCorrectMessage import NotCorrectMessage
+import app.controllers.expense_controllers as expense_cnt
 import app.controllers.user_controllers as user_cnt
 import app.controllers.category_controllers as category_cnt
 import app.utils.messages as messages 
@@ -89,13 +89,15 @@ async def list_expenses(message: types.Message):
 
 @dp.message_handler()
 async def add_expense(message: types.Message):
-    """Добавляет новый расход"""
+    """
+        Adding new expense
+    """
     try:
-        expense = expenses.add_expense(message.text)
-    except exceptions.NotCorrectMessage as e:
+        expense = await expense_cnt.add_expense(message.from_user.id, message.text)
+    except NotCorrectMessage as e:
         await message.answer(str(e))
         return
     answer_message = (
-        f"Добавлены траты {expense.amount} грн. на {expense.category_name}.\n\n"
-        f"{expenses.get_today_statistics()}")
+        f"Добавлены траты {expense['amount']} грн. на {expense['category_name']}.\n\n")
+    #    f"{expense_cnt.get_today_statistics()}")
     await message.answer(answer_message)

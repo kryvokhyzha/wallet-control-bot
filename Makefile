@@ -10,4 +10,5 @@ run_app:
 							--env DB_NAME=${DB_NAME} \
 							--env DB_USER_COLLECTION_NAME=${DB_USER_COLLECTION_NAME} \
 							--env DB_CATEGORY_COLLECTION_NAME=${DB_CATEGORY_COLLECTION_NAME} \
+							--env DB_EXPENSES_COLLECTION_NAME=${DB_EXPENSES_COLLECTION_NAME} \
 							 --rm -it wallet-control-bot
