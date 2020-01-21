@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple
-from app.utils.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_USER_COLLECTION_NAME
+from app.utils.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_USER_COLLECTION_NAME, DB_CATEGORY_COLLECTION_NAME
+from app.utils.constants import INIT_CATEGORY
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -14,21 +15,38 @@ client = AsyncIOMotorClient(uri)
 print('Connection success!')
 
 db = client.get_database(DB_NAME)
-collection = db.get_collection(DB_USER_COLLECTION_NAME)
+user_collection = db.get_collection(DB_USER_COLLECTION_NAME)
 
-async def do_insert(document: Dict):
+
+async def do_insert(document: Dict, collection=user_collection):
     await collection.insert_one(document)
 
 
-async def do_find_one(document: Dict):
+async def do_insert_many(documents: List, collection=user_collection):
+    await collection.insert_many(documents)
+
+
+async def do_find_one(document: Dict, collection=user_collection):
     return await collection.find_one(document)
 
 
-async def do_update(document: Dict):
+async def do_update(document: Dict, collection=user_collection):
     old_user = await do_find_one({'id': document['id']})
     _id = old_user['_id']
 
     await collection.replace_one({'_id': _id}, document)
+
+
+async def check_db_exists(*args, **kwargs):
+    collist = await db.list_collection_names()
+    
+    if DB_CATEGORY_COLLECTION_NAME not in collist:
+        await _init_categories()
+
+
+async def _init_categories():
+    category_coll = db[DB_CATEGORY_COLLECTION_NAME]
+    await do_insert_many(INIT_CATEGORY, collection=category_coll)
 
 
 def insert(table: str, column_values: Dict):
@@ -64,23 +82,5 @@ def delete(table: str, row_id: int) -> None:
 
 def get_cursor():
     return cursor
-
-
-def _init_db():
-    """Инициализирует БД"""
-    with open(os.path.join("app", "createdb.sql"), "r") as f:
-        sql = f.read()
-    cursor.executescript(sql)
-    conn.commit()
-
-
-def check_db_exists():
-    """Проверяет, инициализирована ли БД, если нет — инициализирует"""
-    cursor.execute("SELECT name FROM sqlite_master "
-                   "WHERE type='table' AND name='expense'")
-    table_exists = cursor.fetchall()
-    if table_exists:
-        return
-    _init_db()
 
 # check_db_exists()
