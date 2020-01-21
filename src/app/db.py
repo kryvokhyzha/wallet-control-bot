@@ -52,7 +52,12 @@ async def compute_sum(collection_name: str, field_name:str, document: Union[User
     return summa
 
 
-async def do_update(collection_name: str, document: Union[User, Expense, Dict]):
+async def do_update_one(collection_name: str, document: Union[User, Expense, Dict], set_document: Dict):
+    collection = db.get_collection(collection_name)
+    await collection.update_one(document, set_document)
+
+
+async def do_replace_one(collection_name: str, document: Union[User, Expense, Dict]):
     collection = db.get_collection(collection_name)
 
     old_user = await do_find_one(collection_name, {'id': document['id']})

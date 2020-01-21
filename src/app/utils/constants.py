@@ -10,3 +10,5 @@ INIT_CATEGORY = [{'codename': 'products', 'name': 'продукты', 'is_base_e
                  {'codename': 'subscriptions', 'name': 'подписки', 'is_base_expense': False, 'aliases': 'подписка'},
                  {'codename': 'other', 'name': 'прочее', 'is_base_expense': True, 'aliases': ''}
                 ]
+
+DEFAULT_BUDGET = 2000

@@ -1,14 +1,15 @@
 import logging
 import os
 
-import aiohttp
 from aiogram import Bot, Dispatcher, types
 from aiogram import types
 
 from app.Exceptions.NotCorrectMessage import NotCorrectMessage
+
 import app.controllers.expense_controllers as expense_cnt
 import app.controllers.user_controllers as user_cnt
 import app.controllers.category_controllers as category_cnt
+
 import app.utils.messages as messages 
 
 
@@ -89,6 +90,15 @@ async def list_expenses(message: types.Message):
     answer_message = "Последние сохранённые траты:\n\n* " + "\n\n* "\
             .join(last_expenses_rows)
     await message.answer(answer_message)
+
+
+@dp.message_handler(commands=['set_budget'])
+async def set_budget(message: types.Message):
+    """
+        Setting budget limit
+    """
+    budget = await user_cnt.set_budget(message.from_user.id, message.text)
+    await message.answer(f"Установлен бюджет в размере {budget} грн.")
 
 
 @dp.message_handler()

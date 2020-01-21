@@ -8,7 +8,7 @@ import app.db as db
 
 from app.Exceptions.NotCorrectMessage import NotCorrectMessage
 
-from app.utils.config import DB_EXPENSES_COLLECTION_NAME, DB_CATEGORY_COLLECTION_NAME
+from app.utils.config import DB_EXPENSES_COLLECTION_NAME, DB_CATEGORY_COLLECTION_NAME, DB_USER_COLLECTION_NAME
 
 from app.models.category import Categories
 from app.models.expense import Expense
@@ -85,7 +85,7 @@ async def get_today_statistics(user_id: int) -> str:
     base_today_expenses = result if result else 0
     return (f"Расходы сегодня:\n"
             f"всего — {all_today_expenses} грн.\n"
-            f"базовые — {base_today_expenses} грн. из _get_budget_limit() грн.\n\n"
+            f"базовые — {base_today_expenses} грн. из {await _get_budget_limit(user_id)} грн.\n\n"
             f"За текущий месяц: /month")
 
 
@@ -93,7 +93,6 @@ async def get_month_statistics(user_id: int) -> str:
     """Возвращает строкой статистику расходов за текущий месяц"""
     now = _get_now_datetime()
     start = _get_now_datetime().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    print(start)
 
     document = {'user_id': user_id, 'created': {'$lt': now, '$gte': start}}
 
@@ -107,9 +106,16 @@ async def get_month_statistics(user_id: int) -> str:
 
     result = await db.compute_sum(DB_EXPENSES_COLLECTION_NAME, 'amount', document)
 
+    budget = await _get_budget_limit(user_id)
+
     base_today_expenses = result if result else 0
     return (f"Расходы в текущем месяце:\n"
             f"всего — {all_today_expenses} грн.\n"
             f"базовые — {base_today_expenses} грн. из "
-            "{now.day * _get_budget_limit()} грн.")
+            f"{now.day * budget} грн.")
 
+
+async def _get_budget_limit(user_id) -> int:
+    """Возвращает дневной лимит трат для основных базовых трат"""
+    user = await db.do_find_one(DB_USER_COLLECTION_NAME, {'id': user_id})
+    return user['budget']

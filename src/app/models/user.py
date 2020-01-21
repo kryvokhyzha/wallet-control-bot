@@ -9,3 +9,4 @@ class User(Dict):
     username: str
     is_bot: bool
     language_code: str
+    budget: float
