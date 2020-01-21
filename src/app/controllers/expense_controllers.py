@@ -6,7 +6,7 @@ import pytz
 
 import app.db as db
 
-from app.Exceptions.NotCorrectMessage import NotCorrectMessage
+from app.exceptions.NotCorrectMessage import NotCorrectMessage
 
 from app.utils.config import DB_EXPENSES_COLLECTION_NAME, DB_CATEGORY_COLLECTION_NAME, DB_USER_COLLECTION_NAME
 

@@ -4,7 +4,7 @@ import os
 from aiogram import Bot, Dispatcher, types
 from aiogram import types
 
-from app.Exceptions.NotCorrectMessage import NotCorrectMessage
+from app.exceptions.NotCorrectMessage import NotCorrectMessage
 
 import app.controllers.expense_controllers as expense_cnt
 import app.controllers.user_controllers as user_cnt
