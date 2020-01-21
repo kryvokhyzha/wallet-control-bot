@@ -58,15 +58,19 @@ async def categories_list(message: types.Message):
 
 @dp.message_handler(commands=['today'])
 async def today_statistics(message: types.Message):
-    """Отправляет сегодняшнюю статистику трат"""
-    answer_message = expenses.get_today_statistics()
+    """
+        Sending statistics today
+    """
+    answer_message = await expense_cnt.get_today_statistics(message.from_user.id)
     await message.answer(answer_message)
 
 
 @dp.message_handler(commands=['month'])
 async def month_statistics(message: types.Message):
-    """Отправляет статистику трат текущего месяца"""
-    answer_message = expenses.get_month_statistics()
+    """
+        Sending statistics for the current month
+    """
+    answer_message = await expense_cnt.get_month_statistics(message.from_user.id)
     await message.answer(answer_message)
 
 
@@ -92,12 +96,13 @@ async def add_expense(message: types.Message):
     """
         Adding new expense
     """
+    user_id = message.from_user.id
     try:
-        expense = await expense_cnt.add_expense(message.from_user.id, message.text)
+        expense = await expense_cnt.add_expense(user_id, message.text)
     except NotCorrectMessage as e:
         await message.answer(str(e))
         return
     answer_message = (
-        f"Добавлены траты {expense['amount']} грн. на {expense['category_name']}.\n\n")
-    #    f"{expense_cnt.get_today_statistics()}")
+        f"Добавлены траты {expense['amount']} грн. на {expense['category_name']}.\n\n"
+        f"{await expense_cnt.get_today_statistics(user_id)}")
     await message.answer(answer_message)

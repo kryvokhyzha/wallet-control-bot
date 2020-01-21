@@ -6,5 +6,5 @@ class Expense(Dict):
         Expense structure
     """
     user_id: int
-    amount: int
+    amount: float
     category_name: str

@@ -36,6 +36,22 @@ async def do_find_one(collection_name: str, document: Union[User, Expense, Dict]
     return await collection.find_one(document)
 
 
+async def do_find(collection_name: str, document: Union[User, Expense, Dict]) -> List[Dict]:
+    collection = db.get_collection(collection_name)
+    result = []
+    async for item in collection.find(document):
+        result.append(item)
+    return result
+
+
+async def compute_sum(collection_name: str, field_name:str, document: Union[User, Expense, Dict]) -> List[Dict]:
+    collection = db.get_collection(collection_name)
+    summa = 0
+    async for item in collection.find(document):
+        summa += item[field_name]
+    return summa
+
+
 async def do_update(collection_name: str, document: Union[User, Expense, Dict]):
     collection = db.get_collection(collection_name)
 
@@ -55,35 +71,11 @@ async def fetchall(collection_name: str) -> List[Dict]:
 
 async def check_db_exists(*args, **kwargs):
     collist = await db.list_collection_names()
-    
-    if DB_CATEGORY_COLLECTION_NAME not in collist:
+    categories = await do_find(DB_CATEGORY_COLLECTION_NAME, {})
+
+    if DB_CATEGORY_COLLECTION_NAME not in collist or not categories:
         await _init_categories()
 
 
 async def _init_categories():
-    category_coll = db[DB_CATEGORY_COLLECTION_NAME]
-    await do_insert_many(INIT_CATEGORY, collection=category_coll)
-
-
-def insert(table: str, column_values: Dict):
-    columns = ', '.join( column_values.keys() )
-    values = [tuple(column_values.values())]
-    placeholders = ", ".join( "?" * len(column_values.keys()) )
-    cursor.executemany(
-        f"INSERT INTO {table} "
-        f"({columns}) "
-        f"VALUES ({placeholders})",
-        values)
-    conn.commit()
-
-
-def delete(table: str, row_id: int) -> None:
-    row_id = int(row_id)
-    cursor.execute(f"delete from {table} where id={row_id}")
-    conn.commit()
-
-
-def get_cursor():
-    return cursor
-
-# check_db_exists()
+    await do_insert_many(DB_CATEGORY_COLLECTION_NAME, INIT_CATEGORY)
