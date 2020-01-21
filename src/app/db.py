@@ -5,10 +5,10 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 
 uri = "mongodb://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}" + \
-      "?retryWrites=false".format(DB_USER=DB_USER,
-                                  DB_PASSWORD=DB_PASSWORD,
-                                  DB_HOST=DB_HOST,
-                                  DB_NAME=DB_NAME)
+      "?retryWrites=false"
+uri = uri.format(DB_USER=DB_USER, DB_PASSWORD=DB_PASSWORD,
+                 DB_HOST=DB_HOST, DB_NAME=DB_NAME)
+
 print('Connection to MongoDB...')
 client = AsyncIOMotorClient(uri)
 print('Connection success!')
@@ -29,15 +29,6 @@ async def do_update(document: Dict):
     _id = old_user['_id']
 
     await collection.replace_one({'_id': _id}, document)
-
-
-async def user_is_exists(id: int) -> bool:
-    document = {'id': id}
-
-    if await do_find_one(document):
-        return True
-    else:
-        return False
 
 
 def insert(table: str, column_values: Dict):
