@@ -7,6 +7,8 @@ from aiogram import types
 
 import app.exceptions as exceptions
 import app.expenses as expenses
+import app.users as users
+import app.messages as messages 
 from app.categories import Categories
 
 
@@ -21,14 +23,25 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
-    """Отправляет приветственное сообщение и помощь по боту"""
-    await message.answer(
-        "Бот для учёта финансов\n\n"
-        "Добавить расход: 250 такси\n"
-        "Сегодняшняя статистика: /today\n"
-        "За текущий месяц: /month\n"
-        "Последние внесённые расходы: /expenses\n"
-        "Категории трат: /categories")
+    """
+        Sending welcome message to user
+    """
+    user = message.from_user
+    documnet = {'id': user.id,
+                'is_bot': user.is_bot,
+                'username': user.username,
+                'language_code': user.language_code}
+
+    await users.add_new_user(documnet)
+    await message.answer(messages.WELCOM_MSG)
+
+
+@dp.message_handler(commands=['help'])
+async def send_help(message: types.Message):
+    """
+        Sending help message to user
+    """
+    await message.answer(messages.HELP_MSG)
 
 
 @dp.message_handler(lambda message: message.text.startswith('/del'))

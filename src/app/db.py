@@ -1,22 +1,43 @@
-import os
 from typing import Dict, List, Tuple
+from app.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_USER_COLLECTION_NAME
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
-import sqlite3
 
-
-uri = "mongodb://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}".format(os.getenv('DB_USER', ''),
-                                                                     os.getenv('DB_PASSWORD', ''),
-                                                                     os.getenv('DB_HOST', ''),
-                                                                     os.getenv('DB_NAME', '')
-                                                                    )
-print('Connection to MongoLab...')
+uri = "mongodb://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}" + \
+      "?retryWrites=false".format(DB_USER=DB_USER,
+                                  DB_PASSWORD=DB_PASSWORD,
+                                  DB_HOST=DB_HOST,
+                                  DB_NAME=DB_NAME)
+print('Connection to MongoDB...')
 client = AsyncIOMotorClient(uri)
 print('Connection success!')
 
-conn = sqlite3.connect(os.path.join("app", "db", "finance.db"))
-cursor = conn.cursor()
+db = client.get_database(DB_NAME)
+collection = db.get_collection(DB_USER_COLLECTION_NAME)
+
+async def do_insert(document: Dict):
+    await collection.insert_one(document)
+
+
+async def do_find_one(document: Dict):
+    return await collection.find_one(document)
+
+
+async def do_update(document: Dict):
+    old_user = await do_find_one({'id': document['id']})
+    _id = old_user['_id']
+
+    await collection.replace_one({'_id': _id}, document)
+
+
+async def user_is_exists(id: int) -> bool:
+    document = {'id': id}
+
+    if await do_find_one(document):
+        return True
+    else:
+        return False
 
 
 def insert(table: str, column_values: Dict):
@@ -71,4 +92,4 @@ def check_db_exists():
         return
     _init_db()
 
-check_db_exists()
+# check_db_exists()
