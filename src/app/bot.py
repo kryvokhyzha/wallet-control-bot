@@ -4,7 +4,7 @@ import os
 from aiogram import Bot, Dispatcher, types
 from aiogram import types
 
-from app.Exceptions.NotCorrectMessage import NotCorrectMessage
+from app.exceptions.NotCorrectMessage import NotCorrectMessage
 
 import app.controllers.expense_controllers as expense_cnt
 import app.controllers.user_controllers as user_cnt
@@ -12,6 +12,10 @@ import app.controllers.category_controllers as category_cnt
 
 import app.utils.messages as messages 
 
+from app.utils.config import WEBHOOK_HOST, WEBHOOK_PATH, DEVELOP
+
+
+WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
 logging.basicConfig(level=logging.INFO)
 
@@ -20,6 +24,25 @@ ADMIN_ID = os.getenv("TELEGRAM_ADMIN_ID", '')
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
+
+
+async def on_startup(dp):
+    if DEVELOP == 'False':
+        logging.warning('Adding webhook...')
+        await bot.set_webhook(WEBHOOK_URL)
+        logging.warning('Done!')
+    check_db_exists()
+
+
+async def on_shutdown(dp):
+    logging.warning('Shutting down..')
+
+    if DEVELOP == 'False':
+        logging.warning('Deleting webhook...')
+        await bot.delete_webhook()
+        logging.warning('Done!')
+
+    logging.warning('Bye!')
 
 
 @dp.message_handler(commands=['start', 'help'])

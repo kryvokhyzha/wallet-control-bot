@@ -11,9 +11,14 @@ heroku config:set DB_USER=$DB_USER --app $HEROKU_APP_NAME
 heroku config:set DB_PASSWORD=$DB_PASSWORD --app $HEROKU_APP_NAME
 heroku config:set DB_HOST=$DB_HOST --app $HEROKU_APP_NAME
 heroku config:set DB_NAME=$DB_NAME --app $HEROKU_APP_NAME
+
 heroku config:set DB_USER_COLLECTION_NAME=$DB_USER_COLLECTION_NAME --app $HEROKU_APP_NAME
 heroku config:set DB_CATEGORY_COLLECTION_NAME=$DB_CATEGORY_COLLECTION_NAME --app $HEROKU_APP_NAME
 heroku config:set DB_EXPENSES_COLLECTION_NAME=$DB_EXPENSES_COLLECTION_NAME --app $HEROKU_APP_NAME
+
+heroku config:set WEBHOOK_HOST=$WEBHOOK_HOST --app $HEROKU_APP_NAME
+heroku config:set WEBHOOK_PATH=$WEBHOOK_PATH --app $HEROKU_APP_NAME
+heroku config:set DEVELOP=$DEVELOP --app $HEROKU_APP_NAME
 
 heroku container:push web --app $HEROKU_APP_NAME
 heroku container:release web --app $HEROKU_APP_NAME
