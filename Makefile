@@ -11,4 +11,7 @@ run_app:
 							--env DB_USER_COLLECTION_NAME=${DB_USER_COLLECTION_NAME} \
 							--env DB_CATEGORY_COLLECTION_NAME=${DB_CATEGORY_COLLECTION_NAME} \
 							--env DB_EXPENSES_COLLECTION_NAME=${DB_EXPENSES_COLLECTION_NAME} \
+							--env WEBHOOK_HOST=${WEBHOOK_HOST} \
+							--env WEBHOOK_PATH=${WEBHOOK_PATH} \
+							--env DEVELOP=${DEVELOP} \
 							 --rm -it wallet-control-bot
