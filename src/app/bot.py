@@ -14,6 +14,8 @@ import app.utils.messages as messages
 
 from app.utils.config import WEBHOOK_HOST, WEBHOOK_PATH, DEVELOP
 
+from app.db import check_db_exists
+
 
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
@@ -31,7 +33,7 @@ async def on_startup(dp):
         logging.warning('Adding webhook...')
         await bot.set_webhook(WEBHOOK_URL)
         logging.warning('Done!')
-    check_db_exists()
+    await check_db_exists()
 
 
 async def on_shutdown(dp):
