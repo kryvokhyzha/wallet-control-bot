@@ -45,7 +45,7 @@ def _parse_message(raw_message: str) -> Message:
     """
         Parsing text message about new expense
     """
-    regexp_result = re.match(r"([\d ]+) (.*)", raw_message)
+    regexp_result = re.match(r"[+]?([0-9]*\.[0-9]+|[0-9]+) (.*)", raw_message)
     if not regexp_result or not regexp_result.group(0) \
             or not regexp_result.group(1) or not regexp_result.group(2):
         raise exceptions.NotCorrectMessage(
