@@ -45,7 +45,7 @@ def _parse_message(raw_message: str) -> Message:
     """
         Parsing text message about new expense
     """
-    regexp_result = re.match(r"([\d ]+) (.*)", raw_message)
+    regexp_result = re.match(r"[+]?([0-9]*\.[0-9]+|[0-9]+) (.*)", raw_message)
     if not regexp_result or not regexp_result.group(0) \
             or not regexp_result.group(1) or not regexp_result.group(2):
         raise exceptions.NotCorrectMessage(
@@ -135,7 +135,11 @@ async def last(user_id: int) -> List[Expense]:
 
     rows = await db.do_find(DB_EXPENSES_COLLECTION_NAME, {'user_id': user_id}, sort_param={'sort_by': 'created', 'sort_type': -1}, limit=5)
 
-    last_expenses = [Expense(id=row['_id'], amount=row['amount'], category_name=row['category_codename']) for row in rows]
+    last_expenses = []
+    for row in rows:
+        category_name = await db.do_find_one(DB_CATEGORY_COLLECTION_NAME, {'codename': row['category_codename']})
+        last_expenses.append(Expense(id=row['_id'], amount=row['amount'], category_name=category_name['name']))
+    
     return last_expenses
 
 
