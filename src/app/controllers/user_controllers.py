@@ -49,7 +49,7 @@ def _parse_message(raw_message: str) -> float:
     if not regexp_result or not regexp_result.group(0) \
             or not regexp_result.group(1) or not regexp_result.group(2):
         raise exceptions.NotCorrectMessage(
-            "Не могу понять сообщение. Напишите сообщение в формате, "
+            "❌Не могу понять сообщение. Напишите сообщение в формате, "
             "например:\n/set_budget 1500")
 
     return float(regexp_result.group(2).strip())

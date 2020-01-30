@@ -49,7 +49,7 @@ def _parse_message(raw_message: str) -> Message:
     if not regexp_result or not regexp_result.group(0) \
             or not regexp_result.group(1) or not regexp_result.group(2):
         raise exceptions.NotCorrectMessage(
-            "Не могу понять сообщение. Напишите сообщение в формате, "
+            "❌Не могу понять сообщение. Напишите сообщение в формате, "
             "например:\n1500 метро")
 
     amount = float(regexp_result.group(1).replace(" ", ""))
@@ -86,7 +86,7 @@ async def get_today_statistics(user_id: int) -> str:
     result = await db.compute_sum(DB_EXPENSES_COLLECTION_NAME, 'amount', document)
 
     if not result:
-        return "Сегодня ещё нет расходов"
+        return "Сегодня ещё нет расходов❗"
     all_today_expenses = result
 
     document = {'user_id': user_id, 'is_base_expense': True, 'created': {'$lt': now, '$gte': start}}
@@ -94,7 +94,7 @@ async def get_today_statistics(user_id: int) -> str:
     result = await db.compute_sum(DB_EXPENSES_COLLECTION_NAME, 'amount', document)
 
     base_today_expenses = result if result else 0
-    return (f"Расходы сегодня:\n"
+    return (f"Расходы сегодня💸\n"
             f"всего — {round(all_today_expenses, 2)} грн.\n"
             f"базовые — {round(base_today_expenses, 2)} грн. из {await _get_budget_limit(user_id)} грн.\n\n"
             f"За текущий месяц: /month")
@@ -112,7 +112,7 @@ async def get_month_statistics(user_id: int) -> str:
     result = await db.compute_sum(DB_EXPENSES_COLLECTION_NAME, 'amount', document)
 
     if not result:
-        return "В этом месяце ещё нет расходов"
+        return "В этом месяце ещё нет расходов❗"
     all_today_expenses = result
     
     document = {'user_id': user_id, 'is_base_expense': True, 'created': {'$lt': now, '$gte': start}}
@@ -122,7 +122,7 @@ async def get_month_statistics(user_id: int) -> str:
     budget = await _get_budget_limit(user_id)
 
     base_today_expenses = result if result else 0
-    return (f"Расходы в текущем месяце:\n"
+    return (f"Расходы в текущем месяце💸\n"
             f"всего — {round(all_today_expenses, 2)} грн.\n"
             f"базовые — {round(base_today_expenses, 2)} грн. из "
             f"{now.day * budget} грн.")

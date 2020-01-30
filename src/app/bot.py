@@ -71,7 +71,7 @@ async def del_expense(message: types.Message):
     row_id = message.text[4:]
     await expense_cnt.delete_expense(row_id)
 
-    answer_message = "Удалил"
+    answer_message = "Удалил ✔️"
     await message.answer(answer_message)
 
 
@@ -107,7 +107,7 @@ async def list_expenses(message: types.Message):
     last_expenses = await expense_cnt.last(message.from_user.id)
 
     if not last_expenses:
-        await message.answer("Расходы ещё не заведены")
+        await message.answer("Расходы ещё не заведены❗")
         return
 
     last_expenses_rows = [
@@ -115,7 +115,7 @@ async def list_expenses(message: types.Message):
         f"/del{expense['id']} для удаления"
         for expense in last_expenses]
 
-    answer_message = "Последние сохранённые траты:\n\n* " + "\n\n* "\
+    answer_message = "Последние сохранённые траты:\n\n🔸 " + "\n\n🔸 "\
             .join(last_expenses_rows)
 
     await message.answer(answer_message)
@@ -127,7 +127,7 @@ async def set_budget(message: types.Message):
         Setting budget limit
     """
     budget = await user_cnt.set_budget(message.from_user.id, message.text)
-    await message.answer(f"Установлен бюджет в размере {budget} грн.")
+    await message.answer(f"Установлен бюджет в размере {budget} грн. ✔️")
 
 
 @dp.message_handler()
@@ -144,7 +144,7 @@ async def add_expense(message: types.Message):
         return
 
     answer_message = (
-        f"Добавлены траты {expense['amount']} грн. на {expense['category_name']}.\n\n"
+        f"Добавлены траты {expense['amount']} грн. на {expense['category_name']} ✔️\n\n"
         f"{await expense_cnt.get_today_statistics(user_id)}")
 
     await message.answer(answer_message)
