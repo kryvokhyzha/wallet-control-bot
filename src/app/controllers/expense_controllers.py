@@ -95,8 +95,8 @@ async def get_today_statistics(user_id: int) -> str:
 
     base_today_expenses = result if result else 0
     return (f"Расходы сегодня:\n"
-            f"всего — {all_today_expenses} грн.\n"
-            f"базовые — {base_today_expenses} грн. из {await _get_budget_limit(user_id)} грн.\n\n"
+            f"всего — {round(all_today_expenses, 2)} грн.\n"
+            f"базовые — {round(base_today_expenses, 2)} грн. из {await _get_budget_limit(user_id)} грн.\n\n"
             f"За текущий месяц: /month")
 
 
@@ -123,8 +123,8 @@ async def get_month_statistics(user_id: int) -> str:
 
     base_today_expenses = result if result else 0
     return (f"Расходы в текущем месяце:\n"
-            f"всего — {all_today_expenses} грн.\n"
-            f"базовые — {base_today_expenses} грн. из "
+            f"всего — {round(all_today_expenses, 2)} грн.\n"
+            f"базовые — {round(base_today_expenses, 2)} грн. из "
             f"{now.day * budget} грн.")
 
 
