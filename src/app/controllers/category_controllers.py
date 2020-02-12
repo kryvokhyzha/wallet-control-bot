@@ -8,7 +8,7 @@ async def get_categories_list():
     await categories._init()
     categories = categories.get_all_categories()
 
-    answer_message = "Категории трат:\n\n* " +\
+    answer_message = "Категории трат:\n\n🔸 " +\
             ("\n🔸 ".join([c['name']+' ('+", ".join(c['aliases'])+')' for c in categories]))
 
     return answer_message
