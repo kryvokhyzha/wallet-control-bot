@@ -9,6 +9,6 @@ async def get_categories_list():
     categories = categories.get_all_categories()
 
     answer_message = "Категории трат:\n\n* " +\
-            ("\n* ".join([c['name']+' ('+", ".join(c['aliases'])+')' for c in categories]))
+            ("\n🔸 ".join([c['name']+' ('+", ".join(c['aliases'])+')' for c in categories]))
 
     return answer_message
