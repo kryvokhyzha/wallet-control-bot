@@ -12,7 +12,7 @@ motor==2.1.0
 multidict==4.7.3
 packaging==20.0
 pluggy==0.13.1
-py==1.8.1
+py==1.10.0
 pymongo==3.10.1
 pyparsing==2.4.6
 pytest==5.3.2
